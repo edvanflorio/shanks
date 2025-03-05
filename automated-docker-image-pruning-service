@@ -1,0 +1,21 @@
+echo "[Unit]
+Description=Remove Docker unused images
+Wants=docker-prune.timer
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/docker image prune -a -f" | sudo tee /etc/systemd/system/docker-prune.service > /dev/null && \
+
+echo "[Unit]
+Description=Run Docker prune every 7 days
+
+[Timer]
+OnBootSec=5m
+OnUnitActiveSec=7d
+Persistent=true
+
+[Install]
+WantedBy=timers.target" | sudo tee /etc/systemd/system/docker-prune.timer > /dev/null && \
+
+sudo systemctl daemon-reload && \
+sudo systemctl enable --now docker-prune.timer
